@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFrameworks>Xamarin.iOS10;MonoAndroid80</TargetFrameworks>
+
+    <!--Don't auto add files for me, I will tell you -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    
+    <Version>0.0.1</Version>
+    <Authors>Maitland Marshall</Authors>
+    <Company>GitBit</Company>
   </PropertyGroup>
 
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('Xamarin.iOS')) ">
@@ -21,7 +28,7 @@
     <PackageReference Include="MSBuild.Sdk.Extras" Version="1.5.4" PrivateAssets="All" />
     <PackageReference Include="Xamarin.Forms" Version="3.1.0.697729" />
 
-    <!-- We will compile anything ending in .shared.cs  You can change this -->
+    <!-- We will compile anything in the Shared directory-->
     <Compile Include="Shared\**\*.cs" />
   </ItemGroup>
 
@@ -36,15 +43,6 @@
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('Xamarin.iOS')) ">
     <Compile Include="Platform\iOS\**\*.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Platform\iOS\ApplePay.cs" />
-    <None Remove="Shared\XPay.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Platform\Android\" />
   </ItemGroup>
 
   <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
