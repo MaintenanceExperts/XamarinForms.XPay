@@ -3,7 +3,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 [assembly: XamlCompilation (XamlCompilationOptions.Compile)]
-namespace XPay.Tests
+namespace XPayNS.Tests
 {
 	public partial class App : Application
 	{

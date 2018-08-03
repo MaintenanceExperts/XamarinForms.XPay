@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace XPay.Shared
+namespace XPayNS.Shared
 {
     public interface IXPay
     {

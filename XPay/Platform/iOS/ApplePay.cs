@@ -4,11 +4,11 @@ using System;
 using System.Threading.Tasks;
 using UIKit;
 using Xamarin.Forms;
-using XPay.Platform.iOS;
-using XPay.Shared;
+using XPayNS.Platform.iOS;
+using XPayNS.Shared;
 
 [assembly: Dependency(typeof(ApplePay))]
-namespace XPay.Platform.iOS
+namespace XPayNS.Platform.iOS
 {
     public class ApplePay : PKPaymentAuthorizationViewControllerDelegate, IXPay
     {

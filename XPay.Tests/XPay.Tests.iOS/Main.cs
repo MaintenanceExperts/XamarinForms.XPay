@@ -5,7 +5,7 @@ using System.Linq;
 using Foundation;
 using UIKit;
 
-namespace XPay.Tests.iOS
+namespace XPayNS.Tests.iOS
 {
     public class Application
     {

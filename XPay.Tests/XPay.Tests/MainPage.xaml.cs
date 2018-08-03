@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace XPay.Tests
+namespace XPayNS.Tests
 {
 	public partial class MainPage : ContentPage
 	{

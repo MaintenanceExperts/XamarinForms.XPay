@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace XPay.Platform.Android
+namespace XPayNS.Platform.Android
 {
     class GooglePay
     {
