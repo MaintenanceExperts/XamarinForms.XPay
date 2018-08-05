@@ -8,12 +8,18 @@ namespace XPayNS.Shared
 {
     public interface IXPay
     {
+        event EventHandler<Action<bool>> AuthorizePayment;
+        event EventHandler DidFinish;
+
         Task<bool> Show(XPayRequest request);
         void Hide();
     }
 
     public class XPay : IXPay
     {
+        public event EventHandler<Action<bool>> AuthorizePayment;
+        public event EventHandler DidFinish;
+
         IXPay PaymentPlatform { get; set; }
 
         public XPay()
@@ -24,6 +30,14 @@ namespace XPayNS.Shared
             }
 
             this.PaymentPlatform = DependencyService.Get<IXPay>(DependencyFetchTarget.NewInstance);
+
+            if(this.PaymentPlatform == null)
+            {
+                throw new NotImplementedException();
+            }
+
+            this.PaymentPlatform.AuthorizePayment += PaymentPlatform_AuthorizePayment;
+            this.PaymentPlatform.DidFinish += PaymentPlatform_DidFinish;
         }
 
         public async Task<bool> Show(XPayRequest request)
@@ -36,6 +50,24 @@ namespace XPayNS.Shared
         {
             this.PaymentPlatform.Hide();
         }
+
+        private void PaymentPlatform_AuthorizePayment(object sender, Action<bool> e)
+        {
+            this.AuthorizePayment?.Invoke(sender, e);
+        }
+
+        private async void PaymentPlatform_DidFinish(object sender, EventArgs e)
+        {
+            if (this.DidFinish != null)
+            {
+                this.DidFinish(this, new EventArgs());
+            }
+            else
+            {
+                await Task.Delay(100);
+                this.Hide();
+            }
+        }
     }
 
     public class XPayRequest
@@ -45,6 +77,14 @@ namespace XPayNS.Shared
         public string CurrencyCode { get; set; }
         public List<string> SupportedCountries { get; set; }
 
+        public List<XPayRequestItem> Items { get; set; } = new List<XPayRequestItem>();
+
+        public XPayRequest AddItem(string label, decimal amount)
+        {
+            this.Items.Add(new XPayRequestItem { Label = label, Amount = amount });
+            return this;
+        }
+
         internal void Validate()
         {
             if (this.CountryCode.Length != 2)
@@ -52,5 +92,11 @@ namespace XPayNS.Shared
                 throw new Exception("CountryCode must be 2 characters only (ISO 3166-1 alpha-2)");
             }
         }
+    }
+
+    public class XPayRequestItem
+    {
+        public string Label { get; set; }
+        public decimal Amount { get; set; }
     }
 }

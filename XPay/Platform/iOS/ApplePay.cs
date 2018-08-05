@@ -1,6 +1,8 @@
 ﻿using Foundation;
 using PassKit;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UIKit;
 using Xamarin.Forms;
@@ -14,6 +16,9 @@ namespace XPayNS.Platform.iOS
     {
         PKPaymentAuthorizationViewController paymentController;
 
+        public event EventHandler<Action<bool>> AuthorizePayment;
+        public event EventHandler DidFinish;
+
         public async Task<bool> Show(XPayRequest request)
         {
             NSString[] paymentNetworks = new NSString[] { PKPaymentNetwork.MasterCard, PKPaymentNetwork.Visa };
@@ -23,13 +28,19 @@ namespace XPayNS.Platform.iOS
                 throw new NotSupportedException();
             }
 
-            PKPaymentSummaryItem
-                paymentLine = PKPaymentSummaryItem.Create("Tap and go payment", new NSDecimalNumber("10")),
-                feeLine = PKPaymentSummaryItem.Create("Fee", new NSDecimalNumber("0")),
-                totalLine = PKPaymentSummaryItem.Create("GitBit", paymentLine.Amount.Add(feeLine.Amount));
+            List<PKPaymentSummaryItem> items = new List<PKPaymentSummaryItem>();
+            for (int i = 0; i < request.Items.Count; i++)
+            {
+                XPayRequestItem requestItem = request.Items[i];
+                items.Add(PKPaymentSummaryItem.Create(requestItem.Label, new NSDecimalNumber(requestItem.Amount.ToString())));
+            }
+
+            // add the total PKPaymentSummaryItem by summing together all the amounts
+            // it will add a Pay To "GitBit" or whatever label you put in here
+            items.Add(PKPaymentSummaryItem.Create("GitBit", new NSDecimalNumber(items.Sum(x => x.Amount.FloatValue).ToString())));
 
             PKPaymentRequest paymentRequest = new PKPaymentRequest();
-            paymentRequest.PaymentSummaryItems = new PKPaymentSummaryItem[] { paymentLine, feeLine, totalLine };
+            paymentRequest.PaymentSummaryItems = items.ToArray();
             paymentRequest.MerchantIdentifier = request.MerchantIdentifier;
             paymentRequest.MerchantCapabilities = PKMerchantCapability.ThreeDS;
             paymentRequest.CountryCode = request.CountryCode;
@@ -64,19 +75,25 @@ namespace XPayNS.Platform.iOS
 
         public override void DidAuthorizePayment(PKPaymentAuthorizationViewController controller, PKPayment payment, Action<PKPaymentAuthorizationStatus> completion)
         {
-            completion(PKPaymentAuthorizationStatus.Success);
+            this.AuthorizePayment?.Invoke(this, new Action<bool>((auth) =>
+            {
+                if (auth)
+                {
+                    completion(PKPaymentAuthorizationStatus.Success);
+                }
+                else
+                {
+                    completion(PKPaymentAuthorizationStatus.Failure);
+                }
+            }));
         }
 
-        public async override void PaymentAuthorizationViewControllerDidFinish(PKPaymentAuthorizationViewController controller)
+        public override void PaymentAuthorizationViewControllerDidFinish(PKPaymentAuthorizationViewController controller)
         {
-            await Task.Delay(100);
-            this.Hide();
+            this.DidFinish?.Invoke(this, new EventArgs());
         }
 
-        public override void WillAuthorizePayment(PKPaymentAuthorizationViewController controller)
-        {
-
-        }
+        public override void WillAuthorizePayment(PKPaymentAuthorizationViewController controller) { }
 
 
         #endregion

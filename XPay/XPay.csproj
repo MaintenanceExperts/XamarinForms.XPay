@@ -6,7 +6,7 @@
     <!--Don't auto add files for me, I will tell you -->
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     
-    <Version>0.0.3</Version>
+    <Version>0.0.4</Version>
     <Authors>Maitland Marshall, Matthew Calcutt</Authors>
     <Company>GitBit</Company>
     <Description>A Xamarin Forms library for handling Google &amp; Apple Pay</Description>
