@@ -36,8 +36,7 @@ namespace XPayNS.Platform.iOS
             }
 
             // add the total PKPaymentSummaryItem by summing together all the amounts
-            // it will add a Pay To "GitBit" or whatever label you put in here
-            items.Add(PKPaymentSummaryItem.Create("GitBit", new NSDecimalNumber(items.Sum(x => x.Amount.FloatValue).ToString())));
+            items.Add(PKPaymentSummaryItem.Create(request.PayTo ?? "Payee", new NSDecimalNumber(items.Sum(x => x.Amount.FloatValue).ToString())));
 
             PKPaymentRequest paymentRequest = new PKPaymentRequest();
             paymentRequest.PaymentSummaryItems = items.ToArray();

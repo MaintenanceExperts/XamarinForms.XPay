@@ -75,6 +75,8 @@ namespace XPayNS.Shared
         public string MerchantIdentifier { get; set; }
         public string CountryCode { get; set; }
         public string CurrencyCode { get; set; }
+        public string PayTo { get; set; }
+
         public List<string> SupportedCountries { get; set; }
 
         public List<XPayRequestItem> Items { get; set; } = new List<XPayRequestItem>();

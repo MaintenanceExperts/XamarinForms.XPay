@@ -6,7 +6,7 @@
     <!--Don't auto add files for me, I will tell you -->
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     
-    <Version>0.0.4</Version>
+    <Version>0.0.5</Version>
     <Authors>Maitland Marshall, Matthew Calcutt</Authors>
     <Company>GitBit</Company>
     <Description>A Xamarin Forms library for handling Google &amp; Apple Pay</Description>
@@ -45,6 +45,12 @@
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('Xamarin.iOS')) ">
     <Compile Include="Platform\iOS\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'MonoAndroid80'">
+    <PackageReference Include="Xamarin.GooglePlayServices.Wallet">
+      <Version>42.1021.1</Version>
+    </PackageReference>
   </ItemGroup>
 
   <Import Project="$(MSBuildSDKExtrasTargets)" Condition="Exists('$(MSBuildSDKExtrasTargets)')" />
